@@ -24,3 +24,24 @@ def write_file(working_directory: str, file_path: str, content: str) -> str:
     
     except Exception as e:
             print(f"Error: {e}")
+
+schema_write_file = {
+    "type": "function",
+    "function": {
+        "name": "write_file",
+        "description": "Writes or overwrites content in a file path relative to the working directory, providing output of the new content",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "file_path": {
+                    "type": "string",
+                    "description": "File path to run the process from, relative to the working directory",
+                },
+                "content": {
+                    "type": "string",
+                    "description": "New content to be written in the file",
+                            },
+                        },
+        },
+    },
+}
