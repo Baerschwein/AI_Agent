@@ -6,7 +6,7 @@ def write_file(working_directory: str, file_path: str, content: str) -> str:
         target_file= os.path.normpath(os.path.join(working_dir_abs, file_path))
         parent_dir = os.path.dirname(target_file)
     
-        if os.path.isfile(target_file):
+        if not os.path.isdir(target_file):
                 valid_target_file= os.path.commonpath([working_dir_abs, target_file]) == working_dir_abs
         else:
             raise Exception(f'Cannot write to "{file_path}" as it is a directory')
