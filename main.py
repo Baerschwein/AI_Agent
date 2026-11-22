@@ -1,4 +1,5 @@
 import os
+import sys
 import argparse
 import json
 from dotenv import load_dotenv
@@ -20,34 +21,42 @@ client = OpenAI(
     api_key=api_key,
 )
 
+
+
 messages = [
     {"role": "system", "content": system_prompt},
     {"role": "user", "content": args.user_prompt},
 ]
 
-response = client.chat.completions.create(
-    model="openrouter/free",
-    messages=messages,
-    tools=available_functions,
-)
+for _ in range(20):
 
-message = response.choices[0].message
-if args.verbose == True:
-    print(f"User prompt: {args.user_prompt}")
-    if response.usage is not None:
-        print(f"Prompt tokens: {response.usage.prompt_tokens}")
-        print(f"Response tokens: {response.usage.completion_tokens}")
-    else: raise RuntimeError ("request failed")
+    response = client.chat.completions.create(
+        model="openrouter/free",
+        messages=messages,
+        tools=available_functions,
+    )
 
-if not message.tool_calls == None:
-    for tool_call in message.tool_calls:
-        #function_args = json.loads(tool_call.function.arguments or "{}")
-        result_message = call_function(tool_call)
-        #print(f"Calling function: {tool_call.function.name}({function_args})")
-        if result_message["content"] == "":
-            raise Exception("Error: no content")
-        if args.verbose == True:
-            print(f"-> {result_message['content']}")
-else:        
-    print(f"Response: \n{response.choices[0].message.content}")
+    message = response.choices[0].message
+    messages.append(message)
 
+
+    if args.verbose == True:
+        print(f"User prompt: {args.user_prompt}")
+        if response.usage is not None:
+            print(f"Prompt tokens: {response.usage.prompt_tokens}")
+            print(f"Response tokens: {response.usage.completion_tokens}")
+        else: raise RuntimeError ("request failed")
+
+    if not message.tool_calls == None:
+        for tool_call in message.tool_calls:
+            result_message = call_function(tool_call)
+            messages.append(result_message)
+            if result_message["content"] == "":
+                raise Exception("Error: no content")
+            if args.verbose == True:
+                print(f"-> {result_message['content']}")
+    else:        
+        print(f"Response: \n{response.choices[0].message.content}")
+        break
+else:
+    sys.exit("Error: No answer found")    

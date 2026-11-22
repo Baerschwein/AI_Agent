@@ -37,6 +37,7 @@ def call_function(tool_call, verbose: bool = False) -> dict:
         "content": f"Error: Unknown function: {function_name}",}
     else:
         result = function_map[function_name](**function_args)
+        print(function_name, type(result))
         return {
         "role": "tool",
         "tool_call_id": tool_call.id,

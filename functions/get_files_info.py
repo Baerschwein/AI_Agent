@@ -22,7 +22,8 @@ def get_files_info(working_directory: str, directory: str = ".") -> str:
                 abs_item= os.path.join(target_dir, item)
                 size = os.path.getsize(abs_item)
                 is_dir = os.path.isdir(abs_item)
-                print(f"{item}: file_size={size}, is_dir={is_dir}")
+                #print(f"{item}: file_size={size}, is_dir={is_dir}")
+                return f"{item}: file_size={size}, is_dir={is_dir}"
 
     except Exception as e:
          print(f"Error: {e}")
